@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Smart House</title>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+</head>
+<body>
+<button id="ac_on">エアコンON</button>
+<button id="ac_off">エアコンOFF</button>
+<script>
+
+var CHANNEL_ID = "ch152fbfb7-645e-4a21-b3ef-8f292e31f94a";
+
+$("#ac_on").click(function() {
+    turnAirConditioner("on");
+});
+
+$("#ac_off").click(function() {
+    turnAirConditioner("off");
+});
+
+function turnAirConditioner(onoff) {
+  $.ajax({
+    type: "POST",
+    url: "https://api.parse.com/1/push",
+    data: '{"channel":"' + CHANNEL_ID + '",' +
+            '"type": "android",' +
+            '"expiration_interval": 86400,' +
+            '"data":{' +
+                '"action":"aoabook.sample.chap5.action.PUSH_INTENT",' +
+                '"airconditioner":"' + onoff + '"}' +
+            '}',
+    dataType: 'json',
+    headers : {
+      "X-Parse-Application-Id" : "TXflzbyo1LGlFnN4qVBosOzTD6il0C7CWlFqsx8Y",
+      "X-Parse-REST-API-Key" : "zwK0LvH8Fy7w5nmJcMTHNbHcJJhFj98qwWBjtJPq",
+      "Content-Type" : "application/json"
+    },
+    success: function(data, textStatus, XMLHttpRequest) {
+      alert("success");
+    },
+    error: function(xhr, textStatus, errorThrown) {
+      alert(textStatus + " : " + errorThrown);
+    }
+  });
+}
+</script>
+
+</body>
+</html>

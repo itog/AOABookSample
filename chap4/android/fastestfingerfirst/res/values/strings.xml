@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="app_name">FastestFingerFirst</string>
+	<string name="no_device">Please connect a DemoKit board.</string>
+	
+    <string name="button_label">Buttons</string>
+</resources>

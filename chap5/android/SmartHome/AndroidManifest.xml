@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="aoabook.sample.chap5.smarthouse"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk android:minSdkVersion="10" />
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+	<uses-permission android:name="android.permission.VIBRATE" />
+    <application
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name" >
+        <uses-library android:name="com.android.future.usb.accessory" />
+        <activity
+            android:name="SmartHouseActivity"
+            android:launchMode="singleInstance"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+   			<intent-filter>
+				<action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" />
+			</intent-filter>
+			<meta-data android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
+				android:resource="@xml/accessory_filter" />
+        </activity>
+        <service android:name="SmartHouseService" />
+        <service android:name="com.parse.PushService" />
+        <receiver android:name="com.parse.ParseBroadcastReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".RemoteIntentReceiver" >
+            <intent-filter>
+                <action android:name="aoabook.sample.chap5.action.PUSH_INTENT" />
+            </intent-filter>
+        </receiver>
+    </application>
+</manifest>

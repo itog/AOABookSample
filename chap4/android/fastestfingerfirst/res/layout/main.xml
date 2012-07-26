@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ff444444"
+    android:orientation="vertical" >
+    <Button
+        android:id="@+id/StartButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="Start" />
+    
+    <LinearLayout
+        android:id="@+id/LinearLayout01"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal" >
+        <ImageView
+            android:id="@+id/RedDroidImage"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/droid_red" />
+        <ImageView
+            android:id="@+id/BlueDroidImage"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/droid_blue" />
+        
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/container2"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal" >
+        
+        <ImageView
+            android:id="@+id/YellowDroidImage"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/droid_yellow" />
+        <ImageView
+            android:id="@+id/GreenDroidImage"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/droid_green" />
+        
+    </LinearLayout>
+</LinearLayout>

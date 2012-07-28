@@ -26,6 +26,6 @@ void loop()
   } else {
     Serial.println("Waiting for Android");
   }
-  delay(100);
+  delay(10);
 }
 

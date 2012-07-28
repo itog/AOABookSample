@@ -1,0 +1,3 @@
+<resources>
+    <usb-accessory manufacturer="MyManufacturer" model="MyModel" version="1.0" />
+</resources>

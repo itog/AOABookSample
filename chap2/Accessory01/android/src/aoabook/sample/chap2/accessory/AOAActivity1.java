@@ -15,10 +15,6 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.Toast;
 
 // UsbManager, UsbAccessoryのインポート（アドオンライブラリ）
 import com.android.future.usb.UsbAccessory;
@@ -32,7 +28,7 @@ import com.android.future.usb.UsbManager;
 /*
  * Android、Arduino間で通信をする
  */
-public class AOAActivity extends Activity {
+public class AOAActivity1 extends Activity {
 	private static final String TAG = "AccessoryMode";
 
 	private static final String ACTION_USB_PERMISSION = "aoabook.sample.chap2.accessory.action.USB_PERMISSION";
@@ -46,8 +42,6 @@ public class AOAActivity extends Activity {
 	private OutputStream mOutputStream;
 	private FileInputStream mInputStream;
 
-	private Button button1;
-	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -64,30 +58,6 @@ public class AOAActivity extends Activity {
 		IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
 		filter.addAction(UsbManager.ACTION_USB_ACCESSORY_DETACHED);
 		registerReceiver(mUsbReceiver, filter);
-		
-		// ボタンがクリックされた時の処理
-		button1 = (Button) findViewById(R.id.button1);
-		button1.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (mOutputStream != null) {
-					try {
-						button1.setEnabled(false);
-						mOutputStream.write('a');
-
-						// readは処理をブロックするので5秒以上かかるとANRが発生してしまう
-						// byte[] buffer = new byte[1];
-						// mInputStream.read(buffer);
-						// Toast.makeText(AccessoryModeActivity.this,
-						// "Get data", Toast.LENGTH_SHORT).show();
-
-						new Thread(new MyRunnable()).start();
-					} catch (IOException e) {
-						Log.e(TAG, "write failed", e);
-					}
-				}
-			}
-		});
 	}
 
 	@Override
@@ -196,31 +166,6 @@ public class AOAActivity extends Activity {
 					// アクセサリをクローズする
 					closeAccessory();
 				}
-			}
-		}
-	};
-	
-	class MyRunnable implements Runnable {
-		@Override
-		public void run() {
-			byte[] buffer = new byte[1];
-
-			try {
-				// インプットストリームの読み込み
-				mInputStream.read(buffer);
-				// button1.setEnabled(true); //スレッド内でUIに関係するメソッドを呼ぶとCalledFromWrongThreadExceptionが発生
-				if (buffer[0] == 'b') {
-					// UI処理はメインスレッドで行う
-					AOAActivity.this.runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							button1.setEnabled(true);
-							Toast.makeText(AOAActivity.this,"Message from Arduino", Toast.LENGTH_SHORT).show();
-						}
-					});
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
 		}
 	};

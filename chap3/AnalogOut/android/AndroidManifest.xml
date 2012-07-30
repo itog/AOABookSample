@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="aoabook.sample.chap2.accessory"
+    package="aoabook.sample.chap3.analogout"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -12,7 +12,7 @@
         android:label="@string/app_name" >
         <uses-library android:name="com.android.future.usb.accessory" />
         <activity
-            android:name="com.pigmal.androidbook.analogout.AnalogOutActivity"
+            android:name=".AnalogOutActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

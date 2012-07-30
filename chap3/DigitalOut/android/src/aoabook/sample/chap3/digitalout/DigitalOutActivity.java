@@ -1,8 +1,9 @@
-package com.pigmal.androidbook.chap3.digitalin;
+package aoabook.sample.chap3.digitalout;
 
 import java.io.FileDescriptor;
-import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -10,44 +11,40 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
-import android.widget.TextView;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.Toast;
-import aoabook.sample.chap2.accessory.R;
+import android.widget.ToggleButton;
 
 import com.android.future.usb.UsbAccessory;
 import com.android.future.usb.UsbManager;
 
 /*
- * Android、Arduino間で通信をする
+ * デジタル出力をする
  */
-public class DigialInActivity extends Activity {
-	private static final String TAG = "DigitalIn";
+public class DigitalOutActivity extends Activity {
+	private static final String TAG = "DigitalOut";
 
-	private static final String ACTION_USB_PERMISSION = "com.pigmal.androidbook.accessory.action.USB_PERMISSION";
+	private static final String ACTION_USB_PERMISSION = "aoabook.sample.ccessory.action.action.USB_PERMISSION";
 
-	private TextView statusText;
-	
 	private UsbManager mUsbManager;
 	private PendingIntent mPermissionIntent;
 	private boolean mPermissionRequestPending;
 
 	private UsbAccessory mAccessory;
 	private ParcelFileDescriptor mFileDescriptor;
-	private FileInputStream mInputStream;
-	
-	private boolean threadRunning = false;
-	
+	private OutputStream mOutputStream;
+
 	// USB接続状態変化のインテントを受け取るレシーバ
 	private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
 			if (ACTION_USB_PERMISSION.equals(action)) {
-				Toast.makeText(DigialInActivity.this, "receiver", Toast.LENGTH_SHORT).show();
+				Toast.makeText(DigitalOutActivity.this, "receiver", Toast.LENGTH_SHORT).show();
 				//
 				// ユーザが確認ダイアログでOKまたはキャンセルを押下した場合
 				//
@@ -82,7 +79,6 @@ public class DigialInActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		
-		statusText = (TextView)findViewById(R.id.text_status);
 		// UsbManagerのインスタンスを取得
 		mUsbManager = UsbManager.getInstance(this);
 		
@@ -93,6 +89,29 @@ public class DigialInActivity extends Activity {
 		IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
 		filter.addAction(UsbManager.ACTION_USB_ACCESSORY_DETACHED);
 		registerReceiver(mUsbReceiver, filter);
+		
+		ToggleButton ledToggle = (ToggleButton)findViewById(R.id.toggle_led);
+		ledToggle.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				if (mOutputStream != null) {
+					byte[] cmd = new byte[1];
+					try {
+						if (isChecked) {
+							Log.v(TAG, "checked");
+							cmd[0] = 1;
+							mOutputStream.write(cmd);
+						} else {
+							Log.v(TAG, "unchecked");
+							cmd[0] = 0;
+							mOutputStream.write(cmd);
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		});
 	}
 
 	@Override
@@ -143,9 +162,7 @@ public class DigialInActivity extends Activity {
 		mFileDescriptor = mUsbManager.openAccessory(accessory);
 		if (mFileDescriptor != null) {
 			FileDescriptor fd = mFileDescriptor.getFileDescriptor();
-			mInputStream = new FileInputStream(fd);
-			
-			new Thread(new MyRunnable()).start();
+			mOutputStream = new FileOutputStream(fd);
 		} else {
 			Log.d(TAG, "Failed to open the accessory");
 		}
@@ -155,7 +172,6 @@ public class DigialInActivity extends Activity {
 	// アクセサリをクローズする
 	//
 	private void closeAccessory() {
-		threadRunning = false;
 		try {
 			if (mFileDescriptor != null) {
 				mFileDescriptor.close();
@@ -163,43 +179,9 @@ public class DigialInActivity extends Activity {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			mInputStream = null;
+			mOutputStream = null;
 			mFileDescriptor = null;
 			mAccessory = null;
 		}
 	}
-	
-	class MyRunnable implements Runnable {
-		@Override
-		public void run() {
-			threadRunning = true;
-			while (threadRunning) {
-				byte[] buffer = new byte[1];
-				try {
-					// インプットストリームの読み込み
-					mInputStream.read(buffer);
-					// UI処理はメインスレッドで行う
-					if (buffer[0] == 0) {
-						DigialInActivity.this.runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								statusText.setText("Status ON");
-								statusText.setBackgroundColor(Color.RED);
-							}
-						});
-					} else {
-						DigialInActivity.this.runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								statusText.setText("Status OFF");
-								statusText.setBackgroundColor(Color.BLACK);
-							}
-						});
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	};
 }

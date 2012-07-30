@@ -1,9 +1,8 @@
-package com.pigmal.androidbook.digitalout;
+package aoabook.sample.chap3.analogin;
 
 import java.io.FileDescriptor;
-import java.io.FileOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -14,38 +13,39 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
-import aoabook.sample.chap2.accessory.R;
 
 import com.android.future.usb.UsbAccessory;
 import com.android.future.usb.UsbManager;
 
 /*
- * デジタル出力をする
+ * アナログ入力の値を表示する
  */
-public class DigitalOutActivity extends Activity {
-	private static final String TAG = "DigitalOut";
+public class AnalogInActivity extends Activity {
+	private static final String TAG = "AnaloglIn";
 
-	private static final String ACTION_USB_PERMISSION = "com.pigmal.androidbook.accessory.action.USB_PERMISSION";
+	private static final String ACTION_USB_PERMISSION = "aoabook.sample.ccessory.action.USB_PERMISSION";
 
+	private TextView statusText;
+	
 	private UsbManager mUsbManager;
 	private PendingIntent mPermissionIntent;
 	private boolean mPermissionRequestPending;
 
 	private UsbAccessory mAccessory;
 	private ParcelFileDescriptor mFileDescriptor;
-	private OutputStream mOutputStream;
-
+	private FileInputStream mInputStream;
+	
+	private boolean threadRunning = false;
+	
 	// USB接続状態変化のインテントを受け取るレシーバ
 	private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
 			if (ACTION_USB_PERMISSION.equals(action)) {
-				Toast.makeText(DigitalOutActivity.this, "receiver", Toast.LENGTH_SHORT).show();
+				Toast.makeText(AnalogInActivity.this, "receiver", Toast.LENGTH_SHORT).show();
 				//
 				// ユーザが確認ダイアログでOKまたはキャンセルを押下した場合
 				//
@@ -80,6 +80,7 @@ public class DigitalOutActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		
+		statusText = (TextView)findViewById(R.id.text_status);
 		// UsbManagerのインスタンスを取得
 		mUsbManager = UsbManager.getInstance(this);
 		
@@ -91,28 +92,7 @@ public class DigitalOutActivity extends Activity {
 		filter.addAction(UsbManager.ACTION_USB_ACCESSORY_DETACHED);
 		registerReceiver(mUsbReceiver, filter);
 		
-		ToggleButton ledToggle = (ToggleButton)findViewById(R.id.toggle_led);
-		ledToggle.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				if (mOutputStream != null) {
-					byte[] cmd = new byte[1];
-					try {
-						if (isChecked) {
-							Log.v(TAG, "checked");
-							cmd[0] = 1;
-							mOutputStream.write(cmd);
-						} else {
-							Log.v(TAG, "unchecked");
-							cmd[0] = 0;
-							mOutputStream.write(cmd);
-						}
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		});
+		checkByteBehavior();
 	}
 
 	@Override
@@ -163,7 +143,9 @@ public class DigitalOutActivity extends Activity {
 		mFileDescriptor = mUsbManager.openAccessory(accessory);
 		if (mFileDescriptor != null) {
 			FileDescriptor fd = mFileDescriptor.getFileDescriptor();
-			mOutputStream = new FileOutputStream(fd);
+			mInputStream = new FileInputStream(fd);
+			
+			new Thread(new MyRunnable()).start();
 		} else {
 			Log.d(TAG, "Failed to open the accessory");
 		}
@@ -173,6 +155,7 @@ public class DigitalOutActivity extends Activity {
 	// アクセサリをクローズする
 	//
 	private void closeAccessory() {
+		threadRunning = false;
 		try {
 			if (mFileDescriptor != null) {
 				mFileDescriptor.close();
@@ -180,9 +163,60 @@ public class DigitalOutActivity extends Activity {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			mOutputStream = null;
+			mInputStream = null;
 			mFileDescriptor = null;
 			mAccessory = null;
 		}
+	}
+	
+	class MyRunnable implements Runnable {
+		@Override
+		public void run() {
+			threadRunning = true;
+			while (threadRunning) {
+				byte[] buffer = new byte[2];
+				try {
+					// インプットストリームの読み込み
+					mInputStream.read(buffer);
+					
+					// 受信した2byteをIntに変換
+					final int value = composeInt(buffer[0], buffer[1]);
+					Log.v(TAG, "Analog value = " + value);
+					statusText.post(new Runnable() {
+						@Override
+						public void run() {
+							// TextViewにアナログ値を表示する
+							statusText.setText(String.valueOf(value));
+						}
+					});
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	};
+	
+	/**
+	 * 2byteからintを作成する
+	 * @param hi 上位バイト
+	 * @param lo 下位バイト
+	 * @return int値
+	 */
+	private static int composeInt(byte hi, byte lo) {
+		return ((hi & 0xff) << 8) + (lo & 0xff);
+	}
+	
+	/*
+	 * Javaのbyteについて
+	 */
+	void checkByteBehavior() {
+		int a = 255; // 0xff
+		byte b = (byte)a;
+		int c = (int)b;
+		int d = b & 0xff;
+		Log.v(TAG, String.format("a == %d == 0x%x", a, a)); // a == 255 == 0xff
+		Log.v(TAG, String.format("b == %d == 0x%x", b, b)); // a == -1 == 0xff
+		Log.v(TAG, String.format("c == %d == 0x%x", c, c)); // a == -1 == 0xffffffff
+		Log.v(TAG, String.format("d == %d == 0x%x", d, d)); // a == 255 == 0xff
 	}
 }

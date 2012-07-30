@@ -1,4 +1,4 @@
-package com.pigmal.androidbook.analogout;
+package aoabook.sample.chap3.analogout;
 
 import java.io.FileDescriptor;
 import java.io.FileOutputStream;
@@ -17,7 +17,6 @@ import android.util.Log;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Toast;
-import aoabook.sample.chap2.accessory.R;
 
 import com.android.future.usb.UsbAccessory;
 import com.android.future.usb.UsbManager;
@@ -28,7 +27,7 @@ import com.android.future.usb.UsbManager;
 public class AnalogOutActivity extends Activity {
 	private static final String TAG = "MyApp";
 
-	private static final String ACTION_USB_PERMISSION = "com.pigmal.androidbook.accessory.action.USB_PERMISSION";
+	private static final String ACTION_USB_PERMISSION = "aoabook.sample.ccessory.action.USB_PERMISSION";
 
 	private UsbManager mUsbManager;
 	private PendingIntent mPermissionIntent;

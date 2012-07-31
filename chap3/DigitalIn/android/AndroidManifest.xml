@@ -13,7 +13,8 @@
         android:theme="@android:style/Theme.NoTitleBar" >
         <uses-library android:name="com.android.future.usb.accessory" />
         <activity
-            android:name="aoabook.sample.chap3.digitalin.DigialInActivity"
+            android:name=".DigialInActivity"
+            android:launchMode="singleInstance"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

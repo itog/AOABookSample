@@ -16,10 +16,10 @@ void setup() {
 void loop() {
   // HIGHを出力
   digitalWrite(LED_PIN, HIGH);
-  delay(18);
+  delay(1);
   // LOWを出力
   digitalWrite(LED_PIN, LOW);
-  delay(18);
+  delay(1);
   Serial.println("looping");
 }
 

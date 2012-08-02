@@ -3,7 +3,7 @@
 #include <AndroidAccessory.h>
 
 // スイッチのポートを定義
-#define SWITCH A6
+#define SWITCH A0
 
 // AndroidAccessoryオブジェクト作成
 AndroidAccessory acc("MyManufacturer",         // 製造者名
@@ -47,6 +47,6 @@ void loop()
     }
   }
   
-  delay(1);
+  delay(10);
 }
 

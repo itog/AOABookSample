@@ -46,7 +46,7 @@ public class AOAActivity extends Activity {
 	private OutputStream mOutputStream;
 	private FileInputStream mInputStream;
 
-	private Button button1;
+	private Button mButton;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -66,13 +66,13 @@ public class AOAActivity extends Activity {
 		registerReceiver(mUsbReceiver, filter);
 		
 		// ボタンがクリックされた時の処理
-		button1 = (Button) findViewById(R.id.button1);
-		button1.setOnClickListener(new OnClickListener() {
+		mButton = (Button) findViewById(R.id.button1);
+		mButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				if (mOutputStream != null) {
 					try {
-						button1.setEnabled(false);
+						mButton.setEnabled(false);
 						mOutputStream.write('a');
 
 						// readは処理をブロックするので5秒以上かかるとANRが発生してしまう
@@ -214,7 +214,7 @@ public class AOAActivity extends Activity {
 					AOAActivity.this.runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
-							button1.setEnabled(true);
+							mButton.setEnabled(true);
 							Toast.makeText(AOAActivity.this,"Message from Arduino", Toast.LENGTH_SHORT).show();
 						}
 					});

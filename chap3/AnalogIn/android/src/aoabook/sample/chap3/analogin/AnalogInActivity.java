@@ -27,7 +27,7 @@ public class AnalogInActivity extends Activity {
 
 	private static final String ACTION_USB_PERMISSION = "aoabook.sample.ccessory.action.USB_PERMISSION";
 
-	private TextView statusText;
+	private TextView mStatusText;
 	
 	private UsbManager mUsbManager;
 	private PendingIntent mPermissionIntent;
@@ -37,7 +37,7 @@ public class AnalogInActivity extends Activity {
 	private ParcelFileDescriptor mFileDescriptor;
 	private FileInputStream mInputStream;
 	
-	private boolean threadRunning = false;
+	private boolean mThreadRunning = false;
 	
 	// USB接続状態変化のインテントを受け取るレシーバ
 	private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
@@ -80,7 +80,7 @@ public class AnalogInActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		
-		statusText = (TextView)findViewById(R.id.text_status);
+		mStatusText = (TextView)findViewById(R.id.text_status);
 		// UsbManagerのインスタンスを取得
 		mUsbManager = UsbManager.getInstance(this);
 		
@@ -155,7 +155,7 @@ public class AnalogInActivity extends Activity {
 	// アクセサリをクローズする
 	//
 	private void closeAccessory() {
-		threadRunning = false;
+		mThreadRunning = false;
 		try {
 			if (mFileDescriptor != null) {
 				mFileDescriptor.close();
@@ -172,8 +172,8 @@ public class AnalogInActivity extends Activity {
 	class MyRunnable implements Runnable {
 		@Override
 		public void run() {
-			threadRunning = true;
-			while (threadRunning) {
+			mThreadRunning = true;
+			while (mThreadRunning) {
 				byte[] buffer = new byte[2];
 				try {
 					// インプットストリームの読み込み
@@ -182,11 +182,11 @@ public class AnalogInActivity extends Activity {
 					// 受信した2byteをIntに変換
 					final int value = composeInt(buffer[0], buffer[1]);
 					Log.v(TAG, "Analog value = " + value);
-					statusText.post(new Runnable() {
+					mStatusText.post(new Runnable() {
 						@Override
 						public void run() {
 							// TextViewにアナログ値を表示する
-							statusText.setText(String.valueOf(value));
+							mStatusText.setText(String.valueOf(value));
 						}
 					});
 				} catch (IOException e) {

@@ -28,7 +28,7 @@ public class DigialInActivity extends Activity {
 
 	private static final String ACTION_USB_PERMISSION = "aoabook.sample.ccessory.action.USB_PERMISSION";
 
-	private TextView statusText;
+	private TextView mStatusText;
 	
 	private UsbManager mUsbManager;
 	private PendingIntent mPermissionIntent;
@@ -38,7 +38,7 @@ public class DigialInActivity extends Activity {
 	private ParcelFileDescriptor mFileDescriptor;
 	private FileInputStream mInputStream;
 	
-	private boolean threadRunning = false;
+	private boolean mThreadRunning = false;
 	
 	// USB接続状態変化のインテントを受け取るレシーバ
 	private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
@@ -81,7 +81,7 @@ public class DigialInActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		
-		statusText = (TextView)findViewById(R.id.text_status);
+		mStatusText = (TextView)findViewById(R.id.text_status);
 		// UsbManagerのインスタンスを取得
 		mUsbManager = UsbManager.getInstance(this);
 		
@@ -154,7 +154,7 @@ public class DigialInActivity extends Activity {
 	// アクセサリをクローズする
 	//
 	private void closeAccessory() {
-		threadRunning = false;
+		mThreadRunning = false;
 		try {
 			if (mFileDescriptor != null) {
 				mFileDescriptor.close();
@@ -171,8 +171,8 @@ public class DigialInActivity extends Activity {
 	class MyRunnable implements Runnable {
 		@Override
 		public void run() {
-			threadRunning = true;
-			while (threadRunning) {
+			mThreadRunning = true;
+			while (mThreadRunning) {
 				byte[] buffer = new byte[1];
 				try {
 					// インプットストリームの読み込み
@@ -182,16 +182,16 @@ public class DigialInActivity extends Activity {
 						DigialInActivity.this.runOnUiThread(new Runnable() {
 							@Override
 							public void run() {
-								statusText.setText("Status ON");
-								statusText.setBackgroundColor(Color.RED);
+								mStatusText.setText("Status ON");
+								mStatusText.setBackgroundColor(Color.RED);
 							}
 						});
 					} else {
 						DigialInActivity.this.runOnUiThread(new Runnable() {
 							@Override
 							public void run() {
-								statusText.setText("Status OFF");
-								statusText.setBackgroundColor(Color.BLACK);
+								mStatusText.setText("Status OFF");
+								mStatusText.setBackgroundColor(Color.BLACK);
 							}
 						});
 					}

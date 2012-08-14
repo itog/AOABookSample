@@ -21,7 +21,7 @@ void setup()
  
 void loop()
 {
-  byte msg[0];
+  byte msg[1];
   if (acc.isConnected()) {
     // Androidが接続されていたらデータを読み込む
     int len = acc.read(msg, sizeof(msg), 1);

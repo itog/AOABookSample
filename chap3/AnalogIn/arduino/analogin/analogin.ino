@@ -42,6 +42,6 @@ void loop()
       acc.write(msg, sizeof(msg));
     }
   }
-  delay(1);
+  delay(10);
 }
 

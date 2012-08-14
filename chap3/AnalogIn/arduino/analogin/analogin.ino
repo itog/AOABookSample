@@ -13,6 +13,10 @@ AndroidAccessory acc("MyManufacturer",         // 製造者名
                 "http://android.com",          // URL
                 "0000000012345678");           // シリアル番号
 
+// メッセージバッファ
+byte msg[2];
+
+// ループカウンタ
 int counter;
 
 void setup()
@@ -28,7 +32,6 @@ void setup()
 void loop()
 {
   int status;
-  byte msg[2];
 
   if (acc.isConnected()) {
     // 高速でデータを送りすぎてしまうと受け取り側が間に合わないので間隔を調整する

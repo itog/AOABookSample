@@ -213,7 +213,7 @@ void loop()
     msg[0] = START_BYTE;
     msg[1] = 6;
     msg[2] = UPDATE_ANALOG_STATE;
-    switch (count++ % 0x50) {
+    switch (count++ % 50) {
     case 10:
       val = analogRead(AIN0);
       msg[3] = 0x0;
@@ -254,7 +254,7 @@ void loop()
     analogWrite(AOUT0, 0);
     analogWrite(AOUT1, 0);
     analogWrite(AOUT2, 0);
-    analogWrite(AOUT3, 2);
+    analogWrite(AOUT3, 0);
   }
     
   delay(10);

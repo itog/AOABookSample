@@ -13,7 +13,11 @@ AndroidAccessory acc("MyManufacturer",         // 製造者名
                 "http://android.com",          // URL
                 "0000000012345678");           // シリアル番号
 
-byte previous; // スイッチの前回の状態を保持する変数
+// メッセージバッファ
+byte msg[1];
+
+// スイッチの前回の状態を保持する変数
+byte previous;
 
 void setup()
 {
@@ -31,7 +35,6 @@ void setup()
 void loop()
 {
   byte status;
-  byte msg[1];
 
   if (acc.isConnected()) {
     // スイッチのポートを読み込む
@@ -46,7 +49,6 @@ void loop()
       previous = status;
     }
   }
-  
   delay(10);
 }
 

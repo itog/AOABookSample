@@ -21,7 +21,7 @@ void setup()
  
 void loop()
 {
-  byte msg[0];
+  byte msg[1];
   if (acc.isConnected()) {
     int len = acc.read(msg, sizeof(msg), 1);
     // analogWriteで指定する値は0から255まで

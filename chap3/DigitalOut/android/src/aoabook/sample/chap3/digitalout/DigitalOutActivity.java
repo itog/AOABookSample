@@ -28,7 +28,7 @@ import com.android.future.usb.UsbManager;
 public class DigitalOutActivity extends Activity {
 	private static final String TAG = "DigitalOut";
 
-	private static final String ACTION_USB_PERMISSION = "aoabook.sample.ccessory.action.action.USB_PERMISSION";
+	private static final String ACTION_USB_PERMISSION = "aoabook.sample.accessory.action.USB_PERMISSION";
 
 	private UsbManager mUsbManager;
 	private PendingIntent mPermissionIntent;

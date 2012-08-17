@@ -25,7 +25,7 @@ import com.android.future.usb.UsbManager;
 public class AnalogInActivity extends Activity {
 	private static final String TAG = "AnaloglIn";
 
-	private static final String ACTION_USB_PERMISSION = "aoabook.sample.ccessory.action.USB_PERMISSION";
+	private static final String ACTION_USB_PERMISSION = "aoabook.sample.accessory.action.USB_PERMISSION";
 
 	private TextView mStatusText;
 	

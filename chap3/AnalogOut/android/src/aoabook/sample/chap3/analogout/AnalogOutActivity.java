@@ -27,7 +27,7 @@ import com.android.future.usb.UsbManager;
 public class AnalogOutActivity extends Activity {
 	private static final String TAG = "MyApp";
 
-	private static final String ACTION_USB_PERMISSION = "aoabook.sample.ccessory.action.USB_PERMISSION";
+	private static final String ACTION_USB_PERMISSION = "aoabook.sample.accessory.action.USB_PERMISSION";
 
 	private UsbManager mUsbManager;
 	private PendingIntent mPermissionIntent;

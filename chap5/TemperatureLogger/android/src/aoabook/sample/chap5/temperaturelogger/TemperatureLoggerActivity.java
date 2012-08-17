@@ -22,7 +22,7 @@ public class TemperatureLoggerActivity extends Activity {
 	// インターバルの最小時間単位
 	static final int TIME_MIN = 60 * 1000;
 	private PendingIntent mPendingIntent;
-	private AlarmManager mAlermManager;
+	private AlarmManager mAlarmManager;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -35,14 +35,14 @@ public class TemperatureLoggerActivity extends Activity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				if (!isChecked) {
-					mAlermManager.cancel(mPendingIntent);
+					mAlarmManager.cancel(mPendingIntent);
 				} else {
 					// 
 					Context c = TemperatureLoggerActivity.this.getApplicationContext();
 					Intent i = new Intent(c, AlarmReceiver.class);
 					mPendingIntent = PendingIntent.getBroadcast(c, 0, i, 0);
-					mAlermManager = (AlarmManager)c.getSystemService(Context.ALARM_SERVICE);
-					mAlermManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), Integer.valueOf(mTemperatureText.getText().toString()) * TIME_MIN, mPendingIntent);
+					mAlarmManager = (AlarmManager)c.getSystemService(Context.ALARM_SERVICE);
+					mAlarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), Integer.valueOf(mTemperatureText.getText().toString()) * TIME_MIN, mPendingIntent);
 				}
 			}
 		});

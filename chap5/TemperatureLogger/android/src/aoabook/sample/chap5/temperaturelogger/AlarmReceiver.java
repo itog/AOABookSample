@@ -9,7 +9,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 	static final String TAG = "Receiver";
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		Toast.makeText(context, "Received Alerm", Toast.LENGTH_SHORT).show();
+		Toast.makeText(context, "Received Alarm", Toast.LENGTH_SHORT).show();
 		
 		// TemperatureLogegrServiceを開始
 		Intent i = new Intent(context, TemperatureLoggerService.class);
